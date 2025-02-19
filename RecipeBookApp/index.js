@@ -1,7 +1,7 @@
 const recipeListEl = document.getElementById("recipe-list"); //parent element
 
 // appending children to the parent and dispaly rendering to DOM
-const dispayRecipes = (recipes) => {
+const displayRecipes = (recipes) => {
   recipeListEl.innerHTML = "";
   recipes.forEach((recipe) => {
     const recipeItemEl = document.createElement("li");
@@ -15,30 +15,39 @@ const dispayRecipes = (recipes) => {
     recipeTitleEl.innerHTML = recipe.title;
 
     const recipeIngredientsEl = document.createElement("p");
-    recipeIngredientsEl.innerHTML = `<strong>Ingredients: </strong>${recipe.extendIngredients.map(
-      (ingredient) => ingredient.original.join(", ")
-    )}`;
+    recipeIngredientsEl.innerHTML = `<strong>Ingredients: </strong>${recipe.extendedIngredients
+      .map((ingredient) => ingredient.original)
+      .join(", ")}`;
 
     const recipeLinkEl = document.createElement("a");
-    recipeLinkEl.href = recipe.srcUrl;
+    recipeLinkEl.href = recipe.sourceUrl;
     recipeLinkEl.innerHTML = "View Recipe";
 
-    recipeListEl.appendChild(recipeImageEl);
-    recipeListEl.appendChild(recipeTitleEl);
+    recipeItemEl.appendChild(recipeImageEl);
+    recipeItemEl.appendChild(recipeTitleEl);
+    recipeItemEl.appendChild(recipeIngredientsEl);
+    recipeItemEl.appendChild(recipeLinkEl);
+
     recipeListEl.appendChild(recipeItemEl);
   });
 };
 
 const getRecipes = async () => {
-  const res = await fetch(
-    `https://api.spoonacular.com/recipes/random?number=10&apiKey=${"b7slQWwmipkKCeIRR9wNJbeamDACksOP"}`
-  );
-  const data = await Response.data();
-  return data.recipes;
+  try {
+    const res = await fetch(
+      `https://api.spoonacular.com/recipes/random?number=10&apiKey=b7slQWwmipkKCeIRR9wNJbeamDACksOP`
+    );
+    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+    const data = await res.json();
+    return data.recipes;
+  } catch (error) {
+    console.error("Error fetching recipes:", error);
+    return [];
+  }
 };
 
 const init = async () => {
   const recipes = await getRecipes();
-  dispayRecipes(recipes);
+  displayRecipes(recipes);
 };
 init();
