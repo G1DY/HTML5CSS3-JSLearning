@@ -30,7 +30,9 @@ const dispayRecipes = (recipes) => {
 };
 
 const getRecipes = async () => {
-  const res = await fetch();
+  const res = await fetch(
+    `https://api.spoonacular.com/recipes/random?number=10&apiKey=${"b7slQWwmipkKCeIRR9wNJbeamDACksOP"}`
+  );
   const data = await Response.data();
   return data.recipes;
 };
